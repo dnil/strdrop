@@ -1,0 +1,84 @@
+[project]
+name = "strdrop"
+version = "0.0.1"
+description = "Clinical DNA variant visualizer and browser"
+authors = [{name="Daniel Nilsson", email="daniel.nilsson@ki.se"}]
+license = {text = "MIT License"}
+readme = "README.md"
+include = [
+  "README.md",
+  "strdrop/**/*",
+]
+requires-python = ">=3.10"
+keywords = ["vcf", "variants", "dna", "lrs", "str", "coverage"]
+classifiers = [
+	"Intended Audience :: Developers",
+	"License :: OSI Approved :: MIT License",
+ 	"Operating System :: MacOS :: MacOS X",
+ 	"Operating System :: Unix",
+	"Programming Language :: Python",
+  	"Programming Language :: Python :: Implementation :: CPython",
+	"Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3.13",
+	"Programming Language :: Python :: 3.14",
+  	"Development Status :: 3 - Alpha",
+	"Intended Audience :: Science/Research",
+  	"Topic :: Scientific/Engineering :: Bio-Informatics",
+  	"Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+	"typer",
+	"pandas",
+	
+]
+[project.urls]
+Repository = "https://github.com/dnil/strdrop"
+Changelog = "https://github.com/dnil/strdrop/blob/main/CHANGELOG.md"
+Documentation = "https://dnil.github.io/strdrop/"
+"Bug Tracker" = "https://github.com/dnil/strdrop/issues"
+Issues = "https://github.com/dnile/strdrop/issues"
+
+
+[project.scripts]
+strdrop = "strdrop.commands:cli"
+
+[tool.hatch.build.targets.wheel]
+  packages = ["strdrop/"]
+  include = [
+    "strdrop/**/*",
+  ]
+  exclude = [
+  	"tests/",
+  	"scripts/",
+  ]
+
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+src = ["strdrop", "tests", "scripts"]
+line-length = 100
+
+[dependency-groups]
+dev = [
+	"responses",
+    "pytest-cov>=4.1.0",
+    "pytest>=7.4.4",
+	"invoke",
+]
+docs = [
+	"mkdocs",
+	"mkdocs-material",
+	"markdown-include",
+]
+lint = [
+    "isort>=5.11.5",
+    "ruff>=0.8.0",
+]
