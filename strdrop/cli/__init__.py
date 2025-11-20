@@ -1,3 +1,2 @@
-import pandas as pd
-import typer
+from .main import run
 

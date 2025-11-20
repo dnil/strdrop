@@ -29,9 +29,10 @@ classifiers = [
   	"Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
 dependencies = [
-	"typer",
+	"coloredlogs",
+	"cyvcf2",
 	"pandas",
-	
+	"typer",
 ]
 [project.urls]
 Repository = "https://github.com/dnil/strdrop"
@@ -40,9 +41,8 @@ Documentation = "https://dnil.github.io/strdrop/"
 "Bug Tracker" = "https://github.com/dnil/strdrop/issues"
 Issues = "https://github.com/dnile/strdrop/issues"
 
-
 [project.scripts]
-strdrop = "strdrop.commands:cli"
+strdrop = "strdrop.cli:run"
 
 [tool.hatch.build.targets.wheel]
   packages = ["strdrop/"]
