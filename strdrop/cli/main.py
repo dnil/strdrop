@@ -124,7 +124,7 @@ def call(training_set: Annotated[Path,
         case_total += test_data[trid][0]
         p = count_value / total_value if total_value > 0 else 0
         if(p < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
-            result = f"{trid} locus overall low with {test_data[trid][0]} (P={p}) and ratio is less than cutoff {test_edit_ratio[trid]}."
+            result = f"{trid} locus overall low with {test_data[trid][0]} (P={p}) and ratio is less over edit distance cutoff {test_edit_ratio[trid]}."
             print(result)
 
     case_total_n_trids = len(test_data.keys())
@@ -133,7 +133,7 @@ def call(training_set: Annotated[Path,
     for trid in test_data.keys():
         locus_depth = test_data[trid][0] / case_average_depth
         if locus_depth < 0.5 and trid in test_edit_ratio and test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
-            result = f"{trid} locus coverage low with {test_data[trid][0]}, below 0.5 of case average and ratio is less than cutoff {test_edit_ratio[trid]}."
+            result = f"{trid} locus coverage low with {test_data[trid][0]}, below 0.5 of case average and edit distance ratio is over cutoff {test_edit_ratio[trid]}."
             print(result)
 
 def run():
