@@ -37,7 +37,7 @@ app = typer.Typer(
     help="Call coverage drops over alleles in STR VCFs"
 )
 
-EDIT_DISTANCE_CUTOFF = 0.1
+EDIT_DISTANCE_CUTOFF = 0.9
 
 def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}) -> bool:
     """Parse SDs from VCF. Return False if file was not found."""
@@ -127,7 +127,7 @@ def call(training_set: Annotated[Path,
         if(p < p_threshold):
             result += f"{trid} locus overall low with {test_data[trid][0]} (P={p})"
             if trid in test_edit_ratio:
-                if test_edit_ratio[trid][0] < EDIT_DISTANCE_CUTOFF:
+                if test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
                     result += f" and ratio is less than cutoff {test_edit_ratio[trid]}."
                     print(result)
 
@@ -149,7 +149,7 @@ def call(training_set: Annotated[Path,
         if(p < p_threshold):
             result += f"{trid} locus norm low with {test_data[trid][0]} (P={p})"
             if trid in test_edit_ratio:
-                if test_edit_ratio[trid][0] < EDIT_DISTANCE_CUTOFF:
+                if test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
                     result += f" and ratio is less than cutoff {test_edit_ratio[trid]}."
                     print(result)
 
