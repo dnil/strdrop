@@ -140,8 +140,8 @@ def call(training_set: Annotated[Path,
     average_count_per_case = total_sum_training / n_training_cases
 
     for trid in test_data.keys():
-        td = pd.Series(sorted(training_data[trid]))
-        case_value = test_data[trid][0] / case_total * average_count_per_case
+        td = pd.Series(sorted(training_data[trid]/average_count_per_case))
+        case_value = test_data[trid][0] / case_total
         count_norm = (td[td<case_value]).sum()
         total_value = td.sum()
         p = count_norm / total_value if total_value > 0 else 0
