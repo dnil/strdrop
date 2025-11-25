@@ -121,39 +121,20 @@ def call(training_set: Annotated[Path,
         td = pd.Series(sorted(training_data[trid]))
         count_value = (td[td<test_data[trid][0]]).sum()
         total_value = td.sum()
-        case_total += total_value
+        case_total += test_data[trid][0]
         p = count_value / total_value if total_value > 0 else 0
-        result = ""
-        if(p < p_threshold):
-            result += f"{trid} locus overall low with {test_data[trid][0]} (P={p})"
-            if trid in test_edit_ratio:
-                if test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
-                    result += f" and ratio is less than cutoff {test_edit_ratio[trid]}."
-                    print(result)
+        if(p < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
+            result = f"{trid} locus overall low with {test_data[trid][0]} (P={p}) and ratio is less than cutoff {test_edit_ratio[trid]}."
+            print(result)
 
-    # per allele counts normalised with total case count
-    total_sum_training = 0
+    case_total_n_trids = len(test_data.keys())
+    case_average_depth = case_total / case_total_n_trids
+    print(f"case average depth {case_average_depth}")
     for trid in test_data.keys():
-        td = pd.Series(sorted(training_data[trid]))
-        total_sum_training += td.sum()
-
-    average_count_per_case = total_sum_training / n_training_cases
-
-    for trid in test_data.keys():
-        td = pd.Series(sorted(training_data[trid]/average_count_per_case))
-        case_value = test_data[trid][0] / case_total
-        count_norm = (td[td<case_value]).sum()
-        total_value = td.sum()
-        p = count_norm / total_value if total_value > 0 else 0
-        result = ""
-        if(p < p_threshold):
-            result += f"{trid} locus norm low with {test_data[trid][0]} (P={p})"
-            if trid in test_edit_ratio:
-                if test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
-                    result += f" and ratio is less than cutoff {test_edit_ratio[trid]}."
-                    print(result)
-
-
+        locus_depth = test_data[trid][0] / case_average_depth
+        if locus_depth < 0.5 and trid in test_edit_ratio and test_edit_ratio[trid][0] > EDIT_DISTANCE_CUTOFF:
+            result = f"{trid} locus coverage low with {test_data[trid][0]}, below 0.5 of case average and ratio is less than cutoff {test_edit_ratio[trid]}."
+            print(result)
 
 def run():
     app()
