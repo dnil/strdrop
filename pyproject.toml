@@ -33,6 +33,7 @@ dependencies = [
 	"cyvcf2",
 	"pandas",
 	"typer",
+	"python-Levenshtein",
 ]
 [project.urls]
 Repository = "https://github.com/dnil/strdrop"
