@@ -1,5 +1,7 @@
 from cyvcf2 import VCF, Writer
 
+from pathlib import Path
+
 def write_output(input_file: Path, annotation: dict, output_file: Path):
     """Write out"""
 

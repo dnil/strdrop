@@ -49,7 +49,7 @@ def call(training_set: Annotated[Path,
                                     typer.Option(exists=True, dir_okay=True, help="Input directory with reference data")],
             input_file: Annotated[Path, typer.Argument(help="Input STR call VCF file")],
             output_file: Annotated[Path, typer.Argument(help="Output annotated VCF file")],
-            xy: Annotated[Path, typer.Option(help="Treat as karyotype XY")],
+            xy: Annotated[Path, typer.Option(help="Treat as karyotype XY")] = False,
             alpha: Annotated[float, typer.Option(help="Unadjusted probability confidence level for coverage test")] = ALPHA,
             fraction: Annotated[float, typer.Option(help="Case average adjusted sequencing depth ratio cutoff")] = CASE_COVERAGE_RATIO_CUTOFF,
             edit: Annotated[float, typer.Option(help="Allele similarity Levenshtein edit distance ratio cutoff")] = EDIT_RATIO_CUTOFF

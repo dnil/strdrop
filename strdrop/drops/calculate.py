@@ -3,6 +3,7 @@ import Levenshtein
 import pandas as pd
 
 from pathlib import Path
+from typing import Tuple
 
 import logging
 logger = logging.getLogger(__name__)
@@ -47,7 +48,7 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}) -> bool:
         return True
     return False
 
-def parse_training_data(training_set)-> tuple(dict, dict):
+def parse_training_data(training_set)-> Tuple[dict, dict]:
     training_data = {}
     training_edit_ratio = {}
     n_training_cases = 0
