@@ -32,7 +32,7 @@ app = typer.Typer(
 )
 
 EDIT_RATIO_CUTOFF = 0.9
-CASE_COVERAGE_RATIO_CUTOFF = 0.5
+CASE_COVERAGE_RATIO_CUTOFF = 0.55
 ALPHA = 0.05
 
 @app.callback()

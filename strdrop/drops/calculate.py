@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 from cyvcf2 import VCF
 
-def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}) -> bool:
+def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:dict={}) -> bool:
     """Parse SDs from VCF. Return False if file was not found."""
     if os.path.isfile(file):
         training_vcf = VCF(file)
@@ -25,6 +25,8 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}) -> bool:
             elif len(variant.ALT) > 1:
                 a2 = variant.ALT[1]
             edit_ratio = Levenshtein.ratio(a1, a2)
+            if trid not in chrom:
+                chrom[trid] = variant.CHROM
 
             if trid in edit_ratios:
                 edit_ratios[trid].append(edit_ratio)

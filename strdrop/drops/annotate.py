@@ -20,8 +20,11 @@ def write_output(input_file: Path, annotation: dict, output_file: Path):
     vcf.add_info_to_header({'ID': 'STRDROP_SDR', 'Description': 'Strdrop case average adjusted sequencing depth ratio',
                             'Type': 'Float', 'Number': '1'})
 
-    vcf.add_info_to_header({'ID': "STRDROP", 'Description': 'Strdrop coverage drop detected',
+    vcf.add_info_to_header({'ID': 'STRDROP', 'Description': 'Strdrop coverage drop detected',
                             'Type': 'Flag', 'Number': '0'})
+
+    vcf.add_filter_to_header({'ID': 'LowDepth', 'Description': 'Strdrop coverage drop detected'})
+    # Add LowDepth flag?
 
     w = Writer(output_file, vcf)
 
@@ -33,6 +36,12 @@ def write_output(input_file: Path, annotation: dict, output_file: Path):
             v.INFO['STRDROP_SDR'] = annotation[trid]["depth_ratio"]
             if "coverage_drop" in annotation[trid]:
                 v.INFO['STRDROP'] = annotation[trid]["coverage_drop"]
+                filter = v.FILTER
+                if not filter:
+                    filter = "LowDepth"
+                else:
+                    filter += ";LowDepth"
+                v.FILTER = filter
         w.write_record(v)
 
     w.close()
