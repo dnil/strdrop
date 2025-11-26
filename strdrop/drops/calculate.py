@@ -93,7 +93,7 @@ def call_test_file(input_file: Path, xy: bool, training_data:dict, alpha, edit, 
             logger.info(f"{trid} locus coverage low with {test_data[trid][0]}, below 0.5 of case average and edit distance ratio is over cutoff {test_edit_ratio[trid]}.")
             annotation[trid]["coverage_warning"] = True
 
-        if locus_depth < fraction and (p < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][0] > edit:
+        if locus_depth < fraction and (annotation[trid]["p"] < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][0] > edit:
             logger.warning(f"Calling coverage drop for {trid}")
             annotation[trid]["coverage_drop"] = True
 
