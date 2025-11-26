@@ -7,7 +7,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 def write_output(input_file: Path, annotation: dict, output_file: Path):
-    """Write out"""
+    """Write out VCF"""
 
     vcf = VCF(input_file)
 

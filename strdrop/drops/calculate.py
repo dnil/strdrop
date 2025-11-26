@@ -66,7 +66,8 @@ def call_test_file(input_file: Path, xy: bool, training_data:dict, alpha, edit, 
     annotation = {}
     test_data = {}
     test_edit_ratio = {}
-    parse_sds(input_file, test_data, test_edit_ratio)
+    test_chrom = {}
+    parse_sds(input_file, test_data, test_edit_ratio, test_chrom)
 
     p_threshold = alpha / len(test_data.keys())
 
@@ -91,11 +92,15 @@ def call_test_file(input_file: Path, xy: bool, training_data:dict, alpha, edit, 
             logger.info(f"{trid} locus overall low with {test_data[trid][0]} (P={p}) and ratio is less over edit distance cutoff {test_edit_ratio[trid]}.")
             annotation[trid]["coverage_warning"] = True
 
-        if locus_depth < fraction and trid in test_edit_ratio and test_edit_ratio[trid][0] > edit:
-            logger.info(f"{trid} locus coverage low with {test_data[trid][0]}, below 0.5 of case average and edit distance ratio is over cutoff {test_edit_ratio[trid]}.")
+        fraction_cutoff = fraction
+        if xy and "X" in test_chrom[trid] or "Y" in test_chrom[trid]:
+            fraction_cutoff = fraction - 0.5 if fraction - 0.5 > 0 else 0.05
+
+        if locus_depth < fraction_cutoff and trid in test_edit_ratio and test_edit_ratio[trid][0] > edit:
+            logger.info(f"{trid} locus coverage low with {test_data[trid][0]}, below {fraction} of case average and edit distance ratio is over cutoff {test_edit_ratio[trid]}.")
             annotation[trid]["coverage_warning"] = True
 
-        if locus_depth < fraction and (annotation[trid]["p"] < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][0] > edit:
+        if locus_depth < fraction_cutoff and (annotation[trid]["p"] < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][0] > edit:
             logger.warning(f"Calling coverage drop for {trid}")
             annotation[trid]["coverage_drop"] = True
 
