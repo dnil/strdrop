@@ -7,7 +7,7 @@ from typing import Optional
 from typing_extensions import Annotated
 
 from strdrop import __version__
-from strdrop.drops import call_test_file, parse_training_data, write_output
+from strdrop.drops import call_test_file, parse_training_data, write_output, write_training_data
 
 coloredlogs.install(level="DEBUG")
 logging.basicConfig(level=logging.DEBUG)
@@ -68,6 +68,17 @@ def call(training_set: Annotated[Path,
 
     write_output(input_file, annotation, output_file)
 
+@app.command(
+    help="[bold]STRdrop[/bold]: Detect drops in STR coverage 🧬",
+    no_args_is_help=True,
+)
+def build(training_set: Annotated[Path,
+                                    typer.Option(exists=True, dir_okay=True, help="Input directory with reference data")],
+          reference_file: Annotated[Path, typer.Argument(help="Output reference archive")],
+          ) -> None:
+
+    (training_data, training_edit_ratio) = parse_training_data(training_set)
+    write_training_data(reference_file, [training_data, training_edit_ratio])
 
 def run():
     app()
