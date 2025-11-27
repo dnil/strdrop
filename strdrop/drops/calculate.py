@@ -20,9 +20,13 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
 
             a1 = variant.REF
             a2 = variant.REF
+
             if len(variant.ALT) == 1:
                 a2 = variant.ALT[0]
+                if variant.genotypes[0][0] != 0 and variant.genotypes[0][1] != 0:
+                    a1 = variant.ALT[0]
             elif len(variant.ALT) > 1:
+                a1 = variant.ALT[0]
                 a2 = variant.ALT[1]
             edit_ratio = Levenshtein.ratio(a1, a2)
             if trid not in chrom:
@@ -37,10 +41,10 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
             alt_sd = 0
             sd_values = variant.format('SD')[0]
             if len(sd_values) == 1:
-                alt_sd = int(sd_values[0])
+                alt_sd = int(sd_values[0]) if int(sd_values[0]) >= 0 else 0
             if len(sd_values) == 2:
-                alt_sd = int(sd_values[1])
-                ref_sd = int(sd_values[0])
+                alt_sd = int(sd_values[1]) if int(sd_values[1]) >= 0 else 0
+                ref_sd = int(sd_values[0]) if int(sd_values[0]) >= 0 else 0
 
             if trid in training_data:
                 # training_data[trid].append(ref_value)
@@ -88,7 +92,7 @@ def call_test_file(input_file: Path, xy: bool, training_data:dict, alpha, edit, 
         locus_depth = test_data[trid][0] / case_average_depth
         annotation[trid]["depth_ratio"] = locus_depth
 
-        if (annotation[trid]["p"] < p_threshold) and test_edit_ratio[trid][0] > edit:
+        if (annotation[trid]["p"] < p_threshold) and (test_edit_ratio[trid][0] > edit):
             logger.info(f"{trid} locus overall low with {test_data[trid][0]} (P={p}) and ratio is less over edit distance cutoff {test_edit_ratio[trid]}.")
             annotation[trid]["coverage_warning"] = True
 

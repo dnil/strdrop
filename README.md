@@ -64,4 +64,10 @@ chr4	3074876	.	CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGC
 ##INFO=<ID=STRDROP,Number=0,Type=Flag,Description="Strdrop coverage drop detected">
 ```
 
+Output files can be written as compressed VCF or BCF by simply giving an appropriate outfile name suffix, thanks to CyVCF2.
+
+```
+strdrop call --training-set /home/daniel.nilsson/proj/strdrop/reference/ mycase.trgt.vcf.gz mycase.trgt.strdrop.vcf.gz
+``` 
+
 ![STRdrop logo](strdrop_logo_generative.png)
