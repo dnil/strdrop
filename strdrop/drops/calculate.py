@@ -93,7 +93,7 @@ def call_test_file(input_file: Path, xy: bool, training_data:dict, alpha, edit, 
         locus_depth = test_data[trid][0] / case_average_depth
         annotation[trid]["depth_ratio"] = locus_depth
 
-        if (annotation[trid]["p"] < p_threshold) and test_edit_ratio[trid][0] > edit:
+        if (annotation[trid]["p"] < p_threshold) and (test_edit_ratio[trid][0] > edit):
             logger.info(f"{trid} locus overall low with {test_data[trid][0]} (P={p}) and ratio is less over edit distance cutoff {test_edit_ratio[trid]}.")
             annotation[trid]["coverage_warning"] = True
 
