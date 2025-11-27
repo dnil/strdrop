@@ -11,3 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changelog, pyproject.toml
 - Simple CLI with version argument
 - Simple drop calling, filter on edit distance, and overall counts or case average expression
+- Cutoff parameter flags, XY flag
+- VCF file writing
+### Changed
+- Moved calculation and annotation to own package
+
