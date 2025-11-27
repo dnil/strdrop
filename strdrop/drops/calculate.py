@@ -1,10 +1,11 @@
+import json
 import os
 import Levenshtein
 import pandas as pd
 
 from cyvcf2 import VCF
 from pathlib import Path
-from typing import Tuple
+from typing import List, Tuple
 
 import logging
 logger = logging.getLogger(__name__)
@@ -54,14 +55,34 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
         return True
     return False
 
+
+def write_training_data(training_set: Path, data: List[dict]):
+    """Write training set dictionaries to json file """
+    with open(training_set, "w") as f:
+        json.dump(data, f)
+
+def read_training_data(training_set: Path):
+    """Read training set dictionaries to json file"""
+    with open(training_set) as f:
+        data = json.load(f)
+    return data
+
+
 def parse_training_data(training_set)-> Tuple[dict, dict]:
-    training_data = {}
-    training_edit_ratio = {}
-    n_training_cases = 0
-    for training_file in os.listdir(training_set):
-        tf = os.path.join(training_set, training_file)
-        if parse_sds(tf, training_data, training_edit_ratio):
-            n_training_cases = n_training_cases + 1
+
+    if not os.path.isfile(training_set):
+        training_data = {}
+        training_edit_ratio = {}
+        n_training_cases = 0
+        for training_file in os.listdir(training_set):
+            tf = os.path.join(training_set, training_file)
+            if parse_sds(tf, training_data, training_edit_ratio):
+                n_training_cases = n_training_cases + 1
+        for trid in training_data.keys():
+            training_data[trid] = sorted(training_data[trid])
+            training_edit_ratio[trid] = sorted(training_edit_ratio[trid])
+    else:
+        training_data, training_edit_ratio = read_training_data(training_set)
 
     return (training_data, training_edit_ratio)
 

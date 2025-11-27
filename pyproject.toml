@@ -35,6 +35,7 @@ dependencies = [
 	"typer",
 	"python-Levenshtein",
 ]
+
 [project.urls]
 Repository = "https://github.com/dnil/strdrop"
 Changelog = "https://github.com/dnil/strdrop/blob/main/CHANGELOG.md"
