@@ -2,13 +2,13 @@ import os
 import Levenshtein
 import pandas as pd
 
+from cyvcf2 import VCF
 from pathlib import Path
 from typing import Tuple
 
 import logging
 logger = logging.getLogger(__name__)
 
-from cyvcf2 import VCF
 
 def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:dict={}) -> bool:
     """Parse SDs from VCF. Return False if file was not found."""

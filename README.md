@@ -1,18 +1,18 @@
 # strdrop
-Flag STR coverage drops in LRS data
 
-A simple tool to catalog normal coverages over a known locus catalog, and flagging sites with drops in new n+1 samples.
+## Flag STR coverage drops in LRS data
+ 
+A simple tool to leverage a collection of reference samples to calculate normal sequencing depths over loci in a locus catalog, and flagging sites with drops in new, N+1, samples.
 
 Call coverage drop if alleles for a repeat in the test file
 - are identical, or fairly similar, defined as within EDIT_RATIO_CUTOFF (default 0.9) Levenshtein edit distance ratio 
-- are covered (have a total sequencing depth SD) at a fraction of CASE_COVERAGE_RATIO (default 0.5) or below of case average locus coverage
-- are among the lowest alpha/N_loci of total sequencing depth values for that locus compared to the test set
+- are covered (have a total sequencing depth SD) at a fraction of CASE_COVERAGE_RATIO_CUTOFF (default 0.55) or below of case average locus coverage
+- are among the lowest alpha/N_loci (default 0.05/N_loci) of total sequencing depth values for that locus compared to the test set
 
-Coverage drop calls are marked with filter tag "COVERAGE_DROP". Edit ratio, case coverage ratio and coverage marginal P value are output as INFO keys on the resulting VCF.
+Coverage drop calls are marked in the output VCF with FILTER tag `LowDepth` and INFO tag `STRDROP`. Edit ratio `STRDROP_EDR`, case coverage ratio `STRDROP_SDR` and coverage marginal P value `STRDROP_P` are output as INFO keys on the resulting VCF.
 
+## Usage
 ```
-strdrop call --help
-
  Usage: strdrop [OPTIONS] COMMAND [ARGS]...
 
  Call coverage drops over alleles in STR VCFs
@@ -41,6 +41,27 @@ strdrop call --help
 │    --edit                       FLOAT  Allele similarity Levenshtein edit distance ratio cutoff [default: 0.9]                                                                                                                                                                            │
 │    --help                              Show this message and exit.                                                                                                                                                                                                                        │
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+You can test the functionality with one of the test files with relatively low coverage:
+```
+uv run strdrop call --fraction 0.55 --training-set test-data test-data/GV-42.trgt.vcf GV-42.strdrop.vcf
+```
+
+To avoid spurious calls on X for XY karyotype, pass the `--xy` flag to lower the coverage ratio expectation with a 0.5 shift.
+```
+uv run strdrop call --xy --fraction 0.55 --training-set test-data test-data/GV-42.trgt.vcf GV-42.strdrop.vcf
+```
+
+Note the tags in the output VCF.
+```
+➜  strdrop git:(main) ✗ grep HTT GV-42.strdrop.vcf
+chr4	3074876	.	CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGCCGCCACCGCCGCCGCCGCCGCCGCCGCCT	CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGCCGCCACCGCCGCCGCCGCCGCCGCCGCCT,CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGCCGCCACCGCCGCCGCCGCCGCCGCCGCCT	.	LowDepth	TRID=HD_HTT;END=3074969;MOTIFS=CAG,CCG;STRUC=<TR>;STRDROP_P=0;STRDROP_EDR=0.967033;STRDROP_SDR=0.470972;STRDROP	GT:AL:ALLR:SD:MC:MS:AP:AM	1/2:84,87:83-84,87-93:25,32:17_8,18_8:0(0-48)_0(51-54)_1(54-57)_1(60-81),0(0-51)_0(54-57)_1(57-60)_1(63-84):0.964286,0.965517:0.02,0.01```
+➜  strdrop git:(main) ✗ grep STRDROP GV-42.strdrop.vcf |head -4
+##INFO=<ID=STRDROP_P,Number=1,Type=Float,Description="Strdrop coverage sequencing depth level probability">
+##INFO=<ID=STRDROP_EDR,Number=1,Type=Float,Description="Strdrop allele similarity Levenshtein edit distance ratio">
+##INFO=<ID=STRDROP_SDR,Number=1,Type=Float,Description="Strdrop case average adjusted sequencing depth ratio">
+##INFO=<ID=STRDROP,Number=0,Type=Flag,Description="Strdrop coverage drop detected">
 ```
 
 ![STRdrop logo](strdrop_logo_generative.png)
