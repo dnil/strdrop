@@ -20,9 +20,14 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
 
             a1 = variant.REF
             a2 = variant.REF
+
+            if 0 not in variant.genotypes[0] and len(variant.ALT)>0:
+                a1 = variant.ALT[0]
+
             if len(variant.ALT) == 1:
                 a2 = variant.ALT[0]
             elif len(variant.ALT) > 1:
+                a1 = variant.ALT[0]
                 a2 = variant.ALT[1]
             edit_ratio = Levenshtein.ratio(a1, a2)
             if trid not in chrom:
@@ -37,10 +42,10 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
             alt_sd = 0
             sd_values = variant.format('SD')[0]
             if len(sd_values) == 1:
-                alt_sd = int(sd_values[0])
+                alt_sd = int(sd_values[0]) if int(sd_values[0]) >= 0 else 0
             if len(sd_values) == 2:
-                alt_sd = int(sd_values[1])
-                ref_sd = int(sd_values[0])
+                alt_sd = int(sd_values[1]) if int(sd_values[1]) >= 0 else 0
+                ref_sd = int(sd_values[0]) if int(sd_values[0]) >= 0 else 0
 
             if trid in training_data:
                 # training_data[trid].append(ref_value)
