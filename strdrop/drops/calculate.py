@@ -21,7 +21,7 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
             a1 = variant.REF
             a2 = variant.REF
 
-            if 0 not in variant.genotypes[0] and len(variant.ALT)>0:
+            if variant.genotypes[0][0] != 0 and variant.genotypes[0][1] != 0 and len(variant.ALT) == 1:
                 a1 = variant.ALT[0]
 
             if len(variant.ALT) == 1:
