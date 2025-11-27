@@ -46,7 +46,7 @@ def main(version: Annotated[Optional[bool], typer.Option("--version", "-v", is_f
     no_args_is_help=True,
 )
 def call(training_set: Annotated[Path,
-                                    typer.Option(exists=True, dir_okay=True, help="Input directory with reference data")],
+                                    typer.Option(exists=True, dir_okay=True, help="Training VCF directory or json with reference data")],
             input_file: Annotated[Path, typer.Argument(help="Input STR call VCF file")],
             output_file: Annotated[Path, typer.Argument(help="Output annotated VCF file")],
             xy: Annotated[bool, typer.Option(help="Treat as karyotype XY")] = False,
@@ -69,7 +69,7 @@ def call(training_set: Annotated[Path,
     write_output(input_file, annotation, output_file)
 
 @app.command(
-    help="[bold]STRdrop[/bold]: Detect drops in STR coverage 🧬",
+    help="[bold]STRdrop[/bold]: Build reference json from sequencing coverage in STR VCFs",
     no_args_is_help=True,
 )
 def build(training_set: Annotated[Path,
