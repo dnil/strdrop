@@ -3,7 +3,7 @@ import os
 import Levenshtein
 import pandas as pd
 
-from cyvcf2 import VCF
+from cyvcf2 import VCF, Variant
 from pathlib import Path
 from typing import List, Tuple
 
@@ -11,49 +11,60 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:dict={}) -> bool:
+def get_allele(variant:Variant, pos:int, step:int) -> str | None:
+    """Return allele for variant sample number pos and allele step (0, 1)"""
+    if variant.genotypes[pos][step] == 0:
+        return variant.REF
+    
+    idx = variant.genotypes[pos][step] - 1
+    return variant.ALT[idx]
+
+def get_variant_edr_sd(variant: Variant, ind_nr: int) -> Tuple[float, float]:
+    """Return edit ratio and sequencing depth for variant, individual"""
+    a1 = get_allele(variant, ind_nr, 0)
+    a2 = get_allele(variant, ind_nr, 1)
+
+    edit_ratio = Levenshtein.ratio(a1, a2)
+
+    ref_sd = 0
+    alt_sd = 0
+    sd_values = variant.format('SD')[0]
+    if len(sd_values) == 1:
+        alt_sd = max(int(sd_values[0]), 0)
+    if len(sd_values) == 2:
+        alt_sd = max(int(sd_values[1]), 0)
+        ref_sd = max(int(sd_values[0]), 0)
+
+    sd = ref_sd + alt_sd
+
+    return (edit_ratio, sd)
+
+def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:dict={}, ind_nr: int = 0) -> bool:
     """Parse SDs from VCF. Return False if file was not found."""
-    if os.path.isfile(file):
-        training_vcf = VCF(file)
-        for variant in training_vcf:
+    if not os.path.isfile(file):
+        return False
+        
+    training_vcf = VCF(file)
+    for variant in training_vcf:
+        (edit_ratio, sd) = get_variant_edr_sd(variant, ind_nr)
 
-            trid = variant.INFO.get('TRID')
+        trid = variant.INFO.get('TRID')
+        if trid not in chrom:
+            chrom[trid] = variant.CHROM
 
-            a1 = variant.REF
-            a2 = variant.REF
+        if trid in edit_ratios:
+            edit_ratios[trid].append(edit_ratio)
+        else:
+            edit_ratios[trid] = [edit_ratio]
 
-            if len(variant.ALT) == 1:
-                a2 = variant.ALT[0]
-                if variant.genotypes[0][0] != 0 and variant.genotypes[0][1] != 0:
-                    a1 = variant.ALT[0]
-            elif len(variant.ALT) > 1:
-                a1 = variant.ALT[0]
-                a2 = variant.ALT[1]
-            edit_ratio = Levenshtein.ratio(a1, a2)
-            if trid not in chrom:
-                chrom[trid] = variant.CHROM
+        if trid in training_data:
+            training_data[trid].append(sd)
+            continue
+        else: 
+            training_data[trid] = [sd]
 
-            if trid in edit_ratios:
-                edit_ratios[trid].append(edit_ratio)
-            else:
-                edit_ratios[trid] = [edit_ratio]
+    return True
 
-            ref_sd = 0
-            alt_sd = 0
-            sd_values = variant.format('SD')[0]
-            if len(sd_values) == 1:
-                alt_sd = int(sd_values[0]) if int(sd_values[0]) >= 0 else 0
-            if len(sd_values) == 2:
-                alt_sd = int(sd_values[1]) if int(sd_values[1]) >= 0 else 0
-                ref_sd = int(sd_values[0]) if int(sd_values[0]) >= 0 else 0
-
-            if trid in training_data:
-                # training_data[trid].append(ref_value)
-                training_data[trid].append(ref_sd + alt_sd)
-                continue
-            training_data[trid] = [ref_sd + alt_sd]
-        return True
-    return False
 
 
 def write_training_data(training_set: Path, data: List[dict]):
