@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 
 from cyvcf2 import VCF, Writer
 
@@ -39,8 +40,6 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
                             'Type': 'Flag', 'Number': '0'})
 
 
-
-
     w = Writer(output_file, vcf)
 
     for v in vcf:
@@ -55,14 +54,13 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
                 if write_info:
                     v.INFO['STRDROP'] = annotation[trid]["coverage_drop"]
 
-                v.set_format('DROP', np.array([s0],[s1],...))
+                v.set_format('DROP', np.array([1]))
                 filter_tag = v.FILTER
                 if not filter_tag:
                     filter_tag = "LowDepth"
                 else:
                     filter_tag += ";LowDepth"
                 v.FILTER = filter_tag
-
 
         w.write_record(v)
 
