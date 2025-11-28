@@ -40,24 +40,30 @@ def get_variant_edr_sd(variant: Variant, ind_nr: int) -> Tuple[float, float]:
 
     return (edit_ratio, sd)
 
-def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:dict={}, ind_nr: int = 0) -> bool:
+def parse_sds(file: Path, sequencing_depths:dict = None, edit_ratios:dict= None, chrom:dict= None, ind_nr: int = 0) -> bool:
     """Parse SDs from VCF. Return False if file was not found."""
     if not os.path.isfile(file):
         return False
-        
+
+    if chrom is None:
+        chrom = {}
+    if edit_ratios is None:
+        edit_ratios = {}
+    if sequencing_depths is None:
+        sequencing_depths = {}
+
     training_vcf = VCF(file)
     for variant in training_vcf:
         (edit_ratio, sd) = get_variant_edr_sd(variant, ind_nr)
 
         trid = variant.INFO.get('TRID')
+
         if trid not in chrom:
             chrom[trid] = variant.CHROM
-
         edit_ratios.setdefault(trid, []).append(edit_ratio)
-        training_data.setdefault(trid, []).append(sd)
+        sequencing_depths.setdefault(trid, []).append(sd)
 
     return True
-
 
 
 def write_training_data(training_set: Path, data: List[dict]):
