@@ -62,6 +62,10 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
                     filter_tag += ";LowDepth"
                 v.FILTER = filter_tag
 
+                v.set_format('SDP', np.array([annotation[trid]["p"]]))
+                v.set_format('EDR', np.array([annotation[trid]["edit_ratio"]]))
+                v.set_format('SDR', np.array([annotation[trid]["depth_ratio"]]))
+
         w.write_record(v)
 
     w.close()
