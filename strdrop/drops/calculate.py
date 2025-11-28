@@ -53,20 +53,11 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
-        append_safe(edit_ratios, trid, edit_ratio)
-        append_safe(training_data, trid, sd)
+        edit_ratios.setdefault(trid, []).append(edit_ratio)
+        training_data.setdefault(trid, []).append(sd)
 
     return True
 
-
-def append_safe(obj, obj_index, elem):
-    """Append `elem` to list in `obj` at `obj_index`.
-    If no list exists `elem` will be first element catching
-    the KeyError raised."""
-    try:
-        obj[obj_index].append(elem)
-    except KeyError:
-        obj[obj_index] = [elem]
 
 
 def write_training_data(training_set: Path, data: List[dict]):
