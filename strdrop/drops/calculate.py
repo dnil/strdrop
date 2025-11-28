@@ -19,6 +19,7 @@ def get_allele(variant:Variant, pos:int, step:int) -> str | None:
     idx = variant.genotypes[pos][step] - 1
     return variant.ALT[idx]
 
+
 def get_variant_edr_sd(variant: Variant, ind_nr: int) -> Tuple[float, float]:
     """Return edit ratio and sequencing depth for variant, individual"""
     a1 = get_allele(variant, ind_nr, 0)
@@ -52,25 +53,27 @@ def parse_sds(file: Path, training_data:dict = {}, edit_ratios:dict={}, chrom:di
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
-        if trid in edit_ratios:
-            edit_ratios[trid].append(edit_ratio)
-        else:
-            edit_ratios[trid] = [edit_ratio]
-
-        if trid in training_data:
-            training_data[trid].append(sd)
-            continue
-        else: 
-            training_data[trid] = [sd]
+        append_safe(edit_ratios, trid, edit_ratio)
+        append_safe(training_data, trid, sd)
 
     return True
 
+
+def append_safe(obj, obj_index, elem):
+    """Append `elem` to list in `obj` at `obj_index`.
+    If no list exists `elem` will be first element catching
+    the KeyError raised."""
+    try:
+        obj[obj_index].append(elem)
+    except KeyError:
+        obj[obj_index] = [elem]
 
 
 def write_training_data(training_set: Path, data: List[dict]):
     """Write training set dictionaries to json file """
     with open(training_set, "w") as f:
         json.dump(data, f)
+
 
 def read_training_data(training_set: Path):
     """Read training set dictionaries to json file"""
@@ -96,6 +99,7 @@ def parse_training_data(training_set)-> Tuple[dict, dict]:
         training_data, training_edit_ratio = read_training_data(training_set)
 
     return (training_data, training_edit_ratio)
+
 
 def call_test_file(input_file: Path, xy: bool, training_data:dict, alpha, edit, fraction) -> dict:
 
