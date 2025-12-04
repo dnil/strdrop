@@ -1,6 +1,6 @@
 [project]
 name = "strdrop"
-version = "0.2"
+version = "0.3"
 description = "Detect coverage drops in LRS STR expansion calls"
 authors = [{name="Daniel Nilsson", email="daniel.nilsson@ki.se"}, {name="Egor Dolzhenko", email="edolzhenko@pacificbiosciences.com"}]
 license = {text = "MIT License"}

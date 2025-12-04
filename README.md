@@ -39,6 +39,7 @@ Coverage drop calls are marked in the output VCF with FILTER tag `LowDepth` and 
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 
+
  Usage: strdrop call [OPTIONS] INPUT_FILE OUTPUT_FILE
 
  STRdrop: Detect drops in STR coverage 🧬
@@ -49,7 +50,7 @@ Coverage drop calls are marked in the output VCF with FILTER tag `LowDepth` and 
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ *  --training-set               PATH   Training VCF directory or json with reference data [required]                                                                                                                                                                                                                       │
-│    --xy              --no-xy           Treat as karyotype XY [default: no-xy]                                                                                                                                                                                                                                              │
+│    --xy              --no-xy           Treat as karyotype XY. Give one xy option per sample.                                                                                                                                                                                                                               │
 │    --alpha                      FLOAT  Unadjusted probability confidence level for coverage test [default: 0.05]                                                                                                                                                                                                           │
 │    --fraction                   FLOAT  Case average adjusted sequencing depth ratio cutoff [default: 0.55]                                                                                                                                                                                                                 │
 │    --edit                       FLOAT  Allele similarity Levenshtein edit distance ratio cutoff [default: 0.9]                                                                                                                                                                                                             │
@@ -71,11 +72,16 @@ Note the tags in the output VCF.
 ```
 ➜  strdrop git:(main) ✗ grep HTT GV-42.strdrop.vcf
 chr4	3074876	.	CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGCCGCCACCGCCGCCGCCGCCGCCGCCGCCT	CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGCCGCCACCGCCGCCGCCGCCGCCGCCGCCT,CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGCCGCCACCGCCGCCGCCGCCGCCGCCGCCT	.	LowDepth	TRID=HD_HTT;END=3074969;MOTIFS=CAG,CCG;STRUC=<TR>;STRDROP_P=0;STRDROP_EDR=0.967033;STRDROP_SDR=0.470972;STRDROP	GT:AL:ALLR:SD:MC:MS:AP:AM	1/2:84,87:83-84,87-93:25,32:17_8,18_8:0(0-48)_0(51-54)_1(54-57)_1(60-81),0(0-51)_0(54-57)_1(57-60)_1(63-84):0.964286,0.965517:0.02,0.01```
-➜  strdrop git:(main) ✗ grep STRDROP GV-42.strdrop.vcf |head -4
+➜  strdrop git:(main) ✗ grep Strdrop GV-42.strdrop.vcf |head -9
 ##INFO=<ID=STRDROP_P,Number=1,Type=Float,Description="Strdrop coverage sequencing depth level probability">
 ##INFO=<ID=STRDROP_EDR,Number=1,Type=Float,Description="Strdrop allele similarity Levenshtein edit distance ratio">
 ##INFO=<ID=STRDROP_SDR,Number=1,Type=Float,Description="Strdrop case average adjusted sequencing depth ratio">
 ##INFO=<ID=STRDROP,Number=0,Type=Flag,Description="Strdrop coverage drop detected">
+##FILTER=<ID=LowDepth,Description="Strdrop coverage drop detected">
+##FORMAT=<ID=SDP,Number=1,Type=Float,Description="Strdrop coverage sequencing depth level probability">
+##FORMAT=<ID=EDR,Number=1,Type=Float,Description="Strdrop allele similarity Levenshtein edit distance ratio">
+##FORMAT=<ID=SDR,Number=1,Type=Float,Description="Strdrop case average adjusted sequencing depth ratio">
+##FORMAT=<ID=DROP,Number=0,Type=String,Description="Strdrop coverage drop detected, 1 for LowDepth">
 ```
 
 Output files can be written as compressed VCF or BCF by simply giving an appropriate outfile name suffix, thanks to CyVCF2.
