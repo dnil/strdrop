@@ -36,8 +36,9 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
     vcf.add_format_to_header({'ID': 'SDR', 'Description': 'Strdrop case average adjusted sequencing depth ratio',
                             'Type': 'Float', 'Number': '1'})
 
-    vcf.add_format_to_header({'ID': 'DROP', 'Description': 'Strdrop coverage drop detected',
-                            'Type': 'Flag', 'Number': '0'})
+    # ideally we'd keep DROP as a flag, but CyVCF2 does not support it.
+    vcf.add_format_to_header({'ID': 'DROP', 'Description': 'Strdrop coverage drop detected, 1 for LowDepth',
+                            'Type': 'String', 'Number': '0'})
 
 
     w = Writer(output_file, vcf)
@@ -54,7 +55,13 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
                 if write_info:
                     v.INFO['STRDROP'] = ",".join([str(drop) for drop in annotation[trid]["coverage_drop"]])
 
-                v.set_format('DROP', np.array(annotation[trid]["coverage_drop"]))
+                v.set_format(
+                    'DROP',
+                    np.array(['1' if drop else '0'
+                              for drop in annotation[trid]["coverage_drop"]],
+                             dtype='S1')
+                )
+
                 filter_tag = v.FILTER
                 if not filter_tag:
                     filter_tag = "LowDepth"
