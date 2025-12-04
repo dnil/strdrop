@@ -50,9 +50,9 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
                 v.INFO['STRDROP_EDR'] = ",".join([str(er) for er in annotation[trid]["edit_ratio"]])
                 v.INFO['STRDROP_SDR'] = ",".join([str(dr) for dr in annotation[trid]["depth_ratio"]])
 
-            if "coverage_drop" in annotation[trid]:
+            if "coverage_drop" in annotation[trid] and any(annotation[trid]["coverage_drop"]):
                 if write_info:
-                    v.INFO['STRDROP'] = annotation[trid]["coverage_drop"]
+                    v.INFO['STRDROP'] = ",".join([str(drop) for drop in annotation[trid]["coverage_drop"]])
 
                 v.set_format('DROP', np.array(annotation[trid]["coverage_drop"]))
                 filter_tag = v.FILTER

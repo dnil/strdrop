@@ -175,6 +175,7 @@ def call_test_file(input_file: Path, xy: list[bool], training_data:dict, alpha, 
         # normalise depth ratio with sample average depth
         annotation[trid]["depth_ratio"] = numpy.zeros(nr_inds)
         annotation[trid]["coverage_warning"] = numpy.zeros(nr_inds, dtype=bool)
+        annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
         for pos in range(nr_inds):
             locus_depth = test_data[trid][0] / case_average_depth[pos]
