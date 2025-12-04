@@ -54,9 +54,6 @@ def parse_sds_training(file: Path, sequencing_depths:dict = None, edit_ratios:di
         sequencing_depths = {}
 
     training_vcf = VCF(file)
-    individuals = training_vcf.samples
-    nr_inds = len(individuals)
-
     for variant in training_vcf:
         trid = variant.INFO.get('TRID')
         if trid not in chrom:
