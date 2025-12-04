@@ -3,7 +3,7 @@ import logging
 import typer
 
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated
 
 from strdrop import __version__
@@ -49,7 +49,7 @@ def call(training_set: Annotated[Path,
                                     typer.Option(exists=True, dir_okay=True, help="Training VCF directory or json with reference data")],
             input_file: Annotated[Path, typer.Argument(help="Input STR call VCF file")],
             output_file: Annotated[Path, typer.Argument(help="Output annotated VCF file")],
-            xy: Annotated[bool, typer.Option(help="Treat as karyotype XY")] = False,
+            xy: Annotated[Optional[List[bool]], typer.Option(help="Treat as karyotype XY. Give one xy option per sample.")] = None,
             alpha: Annotated[float, typer.Option(help="Unadjusted probability confidence level for coverage test")] = ALPHA,
             fraction: Annotated[float, typer.Option(help="Case average adjusted sequencing depth ratio cutoff")] = CASE_COVERAGE_RATIO_CUTOFF,
             edit: Annotated[float, typer.Option(help="Allele similarity Levenshtein edit distance ratio cutoff")] = EDIT_RATIO_CUTOFF
