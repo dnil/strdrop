@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def get_allele(variant:Variant, pos:int, step:int) -> str | None:
     """Return allele for variant sample number pos and allele step (0, 1)"""
-    if variant.genotypes[pos][step] == 0:
+    if variant.genotypes[pos][step] < 1:
         return variant.REF
 
     idx = variant.genotypes[pos][step] - 1
