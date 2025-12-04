@@ -7,7 +7,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-def write_output(input_file: Path, annotation: dict, output_file: Path, write_info: bool):
+def write_output(input_file: Path, annotation: dict, output_file: Path, write_info: bool = True):
     """Write out VCF"""
 
     vcf = VCF(input_file)
@@ -46,15 +46,15 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
         trid = v.INFO.get('TRID')
         if trid in annotation:
             if write_info:
-                v.INFO['STRDROP_P'] = annotation[trid]["p"]
-                v.INFO['STRDROP_EDR'] = annotation[trid]["edit_ratio"]
-                v.INFO['STRDROP_SDR'] = annotation[trid]["depth_ratio"]
+                v.INFO['STRDROP_P'] = ",".join([str(p) for p in annotation[trid]["p"]])
+                v.INFO['STRDROP_EDR'] = ",".join([str(er) for er in annotation[trid]["edit_ratio"]])
+                v.INFO['STRDROP_SDR'] = ",".join([str(dr) for dr in annotation[trid]["depth_ratio"]])
 
             if "coverage_drop" in annotation[trid]:
                 if write_info:
                     v.INFO['STRDROP'] = annotation[trid]["coverage_drop"]
 
-                v.set_format('DROP', np.array([1]))
+                v.set_format('DROP', np.array(annotation[trid]["coverage_drop"]))
                 filter_tag = v.FILTER
                 if not filter_tag:
                     filter_tag = "LowDepth"
@@ -62,9 +62,9 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
                     filter_tag += ";LowDepth"
                 v.FILTER = filter_tag
 
-                v.set_format('SDP', np.array([annotation[trid]["p"]]))
-                v.set_format('EDR', np.array([annotation[trid]["edit_ratio"]]))
-                v.set_format('SDR', np.array([annotation[trid]["depth_ratio"]]))
+            v.set_format('SDP', np.array(annotation[trid]["p"]))
+            v.set_format('EDR', np.array(annotation[trid]["edit_ratio"]))
+            v.set_format('SDR', np.array(annotation[trid]["depth_ratio"]))
 
         w.write_record(v)
 

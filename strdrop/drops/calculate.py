@@ -18,7 +18,6 @@ def get_allele(variant:Variant, pos:int, step:int) -> str | None:
         return variant.REF
 
     idx = variant.genotypes[pos][step] - 1
-    logger.info(f"idx {idx} ref {variant.REF}, alt {variant.ALT} - pos {pos} step {step}")
     return variant.REF if idx > len(variant.ALT) - 1 else variant.ALT[idx]
 
 
@@ -85,14 +84,14 @@ def parse_sds_test(file: Path, sequencing_depths:dict = None, edit_ratios:dict= 
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
-        edit_ratio = numpy.zeros((nr_inds, 1))
-        sd = numpy.zeros((nr_inds,1))
+        edit_ratio = numpy.zeros(nr_inds)
+        sd = numpy.zeros(nr_inds)
 
         for pos in range(nr_inds):
             (edit_ratio[pos], sd[pos]) = get_variant_edr_sd(variant, pos)
 
-        edit_ratios.setdefault(trid, []).append(edit_ratio)
-        sequencing_depths.setdefault(trid, []).append(sd)
+        edit_ratios[trid] = edit_ratio
+        sequencing_depths[trid] = sd
 
     return nr_inds
 
@@ -141,13 +140,15 @@ def get_total_set_p_edr_for_case(training_data: dict, nr_inds: int, test_data: d
     case_total = numpy.zeros((nr_inds, 1))
 
     for trid in test_data:
+        annotation[trid] = {"p": numpy.zeros(nr_inds) , "edit_ratio": numpy.zeros(nr_inds)}
         td = pd.Series(sorted(training_data[trid]))
         for pos in range(nr_inds):
             count_value = (td[td < test_data[trid][pos]]).sum()
             total_value = td.sum()
             case_total[pos] += test_data[trid][pos]
             p = count_value / total_value if total_value > 0 else 0
-            annotation[trid] = {"p": p, "edit_ratio": test_edit_ratio[trid][pos]}
+            annotation[trid]["p"][pos] = p
+            annotation[trid]["edit_ratio"][pos] = test_edit_ratio[trid][pos]
 
     return case_total
 
@@ -172,10 +173,13 @@ def call_test_file(input_file: Path, xy: list[bool], training_data:dict, alpha, 
 
     for trid in test_data:
         # normalise depth ratio with sample average depth
-        locus_depth = test_data[trid][0] / case_average_depth
-        annotation[trid]["depth_ratio"] = locus_depth
+        annotation[trid]["depth_ratio"] = numpy.zeros(nr_inds)
+        annotation[trid]["coverage_warning"] = numpy.zeros(nr_inds, dtype=bool)
 
         for pos in range(nr_inds):
+            locus_depth = test_data[trid][0] / case_average_depth[pos]
+            annotation[trid]["depth_ratio"][pos] = locus_depth
+
             if (annotation[trid]["p"][pos] < p_threshold) and (test_edit_ratio[trid][pos] > edit):
                 logger.info(f"{trid} locus overall low with {test_data[trid][pos]} (P={annotation[trid]['p'][pos]}) and ratio is less over edit distance cutoff {test_edit_ratio[trid][pos]} (ind {pos}).")
                 annotation[trid]["coverage_warning"][pos] = True
@@ -188,7 +192,7 @@ def call_test_file(input_file: Path, xy: list[bool], training_data:dict, alpha, 
                 logger.info(f"{trid} locus coverage low with {test_data[trid][pos]}, below {fraction} of case average and edit distance ratio is over cutoff {test_edit_ratio[trid][pos]} (ind {pos}).")
                 annotation[trid]["coverage_warning"][pos] = True
 
-            if locus_depth < fraction_cutoff and (annotation[trid]["p"] < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][pos] > edit:
+            if locus_depth < fraction_cutoff and (annotation[trid]["p"][pos] < p_threshold) and trid in test_edit_ratio and test_edit_ratio[trid][pos] > edit:
                 logger.warning(f"Calling coverage drop for {trid}, ind {pos}.")
                 annotation[trid]["coverage_drop"][pos] = True
 
