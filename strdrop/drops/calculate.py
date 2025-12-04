@@ -16,9 +16,10 @@ def get_allele(variant:Variant, pos:int, step:int) -> str | None:
     """Return allele for variant sample number pos and allele step (0, 1)"""
     if variant.genotypes[pos][step] == 0:
         return variant.REF
-    
+
     idx = variant.genotypes[pos][step] - 1
-    return variant.ALT[idx]
+    logger.info(f"idx {idx} ref {variant.REF}, alt {variant.ALT} - pos {pos} step {step}")
+    return variant.REF if idx > len(variant.ALT) - 1 else variant.ALT[idx]
 
 
 def get_variant_edr_sd(variant: Variant, ind_nr: int = 0) -> Tuple[float, float]:
