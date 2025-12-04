@@ -84,14 +84,14 @@ def parse_sds_test(file: Path, sequencing_depths:dict = None, edit_ratios:dict= 
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
-        edit_ratios = numpy.zeros((1,nr_inds))
-        sequencing_depths = numpy.zeros((1,nr_inds))
+        edit_ratio = numpy.zeros((nr_inds, 1))
+        sd = numpy.zeros((nr_inds,1))
 
-        for ind_nr in range(len(individuals)):
-            (edit_ratio, sd) = get_variant_edr_sd(variant, ind_nr)
+        for pos in range(nr_inds):
+            (edit_ratio[pos], sd[pos]) = get_variant_edr_sd(variant, pos)
 
-            edit_ratios.setdefault(trid, []).append(edit_ratio)
-            sequencing_depths.setdefault(trid, []).append(sd)
+        edit_ratios.setdefault(trid, []).append(edit_ratio)
+        sequencing_depths.setdefault(trid, []).append(sd)
 
     return nr_inds
 
