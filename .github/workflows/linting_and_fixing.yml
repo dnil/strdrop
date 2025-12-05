@@ -1,8 +1,8 @@
-name: Lint files and fix lint errors with ruff
+name: Lint, format and fix with ruff
 
 # This will only correct linting in local PRs
 on:
-   - pull_request
+  - pull_request
 
 jobs:
   ruff:
@@ -10,10 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-   permissions:
-      contents: write   # required for auto-committing
-      pull-requests: write
+  permissions:
+    contents: write   # required for auto-committing
+    pull-requests: write
 
+  steps:
     - name: Check out git repository
       uses: actions/checkout@v4
 
