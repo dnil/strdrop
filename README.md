@@ -1,6 +1,7 @@
 # strdrop
 
-![Build Status - GitHub][actions-build-status]
+<img src="strdrop_logo_generative.png" alt="STRdrop logo - a shooting star with a STRawberry" style="width:50%; height:auto;">
+
 [![PyPI Version][pypi-img]][pypi-url]
 ![GitHub Release Date][github-release-date]
 [![GitHub commits latest](https://img.shields.io/github/commits-since/dNil/strdrop/latest)](https://GitHub.com/dNil/strdrop/commit/)
@@ -102,7 +103,6 @@ Output files can be written as compressed VCF or BCF by simply giving an appropr
 strdrop call --training-set /home/daniel.nilsson/proj/strdrop/reference/ mycase.trgt.vcf.gz mycase.trgt.strdrop.vcf.gz
 ``` 
 
-![STRdrop logo](strdrop_logo_generative.png)
 
 [github-release-date]: https://img.shields.io/github/release-date/dNil/strdrop
 [github-commits-since]: https://img.shields.io/github/commits-since/:user/:repo/latest
@@ -110,6 +110,8 @@ strdrop call --training-set /home/daniel.nilsson/proj/strdrop/reference/ mycase.
 [ismaintained-resolve-url]: http://isitmaintained.com/project/dNil/strdrop
 [ismaintained-open-rate-img]: http://isitmaintained.com/badge/open/dNil/strdrop.svg
 [ismaintained-open-rate-url]: http://isitmaintained.com/project/dNil/strdrop
+[closed-issues-img]: https://img.shields.io/github/issues-closed/dNil/strdrop.svg
+[closed-issues-url]: https://GitHub.com/dNil/strdrop/issues?q=is%3Aissue+is%3Aclosed
 [pypi-img]: https://img.shields.io/pypi/v/strdrop.svg?style=flat-square
 [pypi-url]: https://pypi.python.org/pypi/strdrop/
 [woke-image]: https://github.com/dNil/strdrop/actions/workflows/woke.yml/badge.svg
