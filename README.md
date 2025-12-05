@@ -1,5 +1,18 @@
 # strdrop
 
+<img src="https://github.com/dnil/strdrop/raw/main/strdrop_logo_generative.png" alt="STRdrop logo - a shooting star with a STRawberry" style="width:50%; height:auto;">
+
+[![PyPI Version][pypi-img]][pypi-url]
+![GitHub Release Date][github-release-date]
+[![GitHub commits latest](https://img.shields.io/github/commits-since/dNil/strdrop/latest)](https://GitHub.com/dNil/strdrop/commit/)
+[![GitHub commit rate](https://img.shields.io/github/commit-activity/w/dNil/strdrop)](https://GitHub.com/dNil/strdrop/pulse/)
+[![GitHub issues-closed][closed-issues-img]][closed-issues-url]
+[![Average time to resolve an issue][ismaintained-resolve-img]][ismaintained-resolve-url]
+[![Percentage of issues still open][ismaintained-open-rate-img]][ismaintained-open-rate-url]
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Woke][woke-image]][woke-url]
+
 ## Flag STR coverage drops in LRS data
  
 A simple tool to leverage a collection of reference samples to calculate normal sequencing depths over loci in a locus catalog, and flagging sites with drops in new, N+1, samples.
@@ -90,4 +103,16 @@ Output files can be written as compressed VCF or BCF by simply giving an appropr
 strdrop call --training-set /home/daniel.nilsson/proj/strdrop/reference/ mycase.trgt.vcf.gz mycase.trgt.strdrop.vcf.gz
 ``` 
 
-![STRdrop logo](strdrop_logo_generative.png)
+
+[github-release-date]: https://img.shields.io/github/release-date/dNil/strdrop
+[github-commits-since]: https://img.shields.io/github/commits-since/:user/:repo/latest
+[ismaintained-resolve-img]: http://isitmaintained.com/badge/resolution/dNil/strdrop.svg
+[ismaintained-resolve-url]: http://isitmaintained.com/project/dNil/strdrop
+[ismaintained-open-rate-img]: http://isitmaintained.com/badge/open/dNil/strdrop.svg
+[ismaintained-open-rate-url]: http://isitmaintained.com/project/dNil/strdrop
+[closed-issues-img]: https://img.shields.io/github/issues-closed/dNil/strdrop.svg
+[closed-issues-url]: https://GitHub.com/dNil/strdrop/issues?q=is%3Aissue+is%3Aclosed
+[pypi-img]: https://img.shields.io/pypi/v/strdrop.svg?style=flat-square
+[pypi-url]: https://pypi.python.org/pypi/strdrop/
+[woke-image]: https://github.com/dNil/strdrop/actions/workflows/woke.yml/badge.svg
+[woke-url]: https://github.com/dNil/strdrop/actions/workflows/woke.yml

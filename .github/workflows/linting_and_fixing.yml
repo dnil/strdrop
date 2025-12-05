@@ -1,0 +1,47 @@
+name: Lint, format and fix with ruff
+
+# This will only correct linting in local PRs
+on:
+  - pull_request
+
+jobs:
+  ruff:
+    name: Lint-and-fix-ruff
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # required for auto-committing
+      pull-requests: write
+
+    steps:
+      - name: Check out git repository
+        uses: actions/checkout@v4
+
+      - name: Ruff Lint and Format
+        uses: astral-sh/ruff-action@v3
+        id: check
+        with:
+          version: "latest"
+          args: "check --fix ."
+
+      - name: Ruff Lint and Format
+        uses: astral-sh/ruff-action@v3
+        id: format
+        with:
+          version: "latest"
+          args: "format ."
+
+      - name: Commit changes
+        if: |
+            steps.check.outputs.exit-code == 0 ||
+            steps.format.outputs.exit-code == 0
+        run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            if git diff --cached --quiet; then
+              echo "No changes to commit"
+            else
+              git commit -m "style: apply ruff autofix & format"
+              git push
+            fi
