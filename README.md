@@ -1,6 +1,6 @@
 # strdrop
 
-<img src="strdrop_logo_generative.png" alt="STRdrop logo - a shooting star with a STRawberry" style="width:50%; height:auto;">
+<img src="https://github.com/dnil/strdrop/raw/main/strdrop_logo_generative.png" alt="STRdrop logo - a shooting star with a STRawberry" style="width:50%; height:auto;">
 
 [![PyPI Version][pypi-img]][pypi-url]
 ![GitHub Release Date][github-release-date]
