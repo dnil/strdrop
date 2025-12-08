@@ -190,7 +190,7 @@ def call_test_file(
         annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
         for pos in range(nr_inds):
-            locus_depth = test_data[trid][0] / case_average_depth[pos]
+            locus_depth = test_data[trid][pos] / case_average_depth[pos]
             annotation[trid]["depth_ratio"][pos] = locus_depth
 
             if (annotation[trid]["p"][pos] < p_threshold) and (test_edit_ratio[trid][pos] > edit):

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some badges to README
 ### Fixed
 - Ruff format for consistent code style
+- Multi individual locus depth only using first sample in VCF
 
 ## [0.3]
 ### Added
