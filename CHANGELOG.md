@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 ### Added
 - Some badges to README
+### Changed
+- `--xy` now takes sample ID instead of relying on sample order in VCF
 ### Fixed
 - Ruff format for consistent code style
 

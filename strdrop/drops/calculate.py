@@ -161,7 +161,7 @@ def get_total_set_p_edr_for_case(
 
 
 def call_test_file(
-    input_file: Path, xy: list[bool], training_data: dict, alpha, edit, fraction
+    input_file: Path, xy: List, training_data: dict, alpha, edit, fraction
 ) -> dict:
     """Parse test (case of interest) VCF. This is allowed to be a multisample VCF.
     Return annotation dict, containing per locus information. Each per locus value is a numpy array with the
@@ -179,6 +179,7 @@ def call_test_file(
         training_data, nr_inds, test_data, test_edit_ratio, annotation
     )
 
+    samples = VCF(input_file).samples
     case_total_n_trids = len(test_data.keys())
     case_average_depth = case_total / case_total_n_trids
     logger.info(f"Case average depth {case_average_depth}")
@@ -189,7 +190,8 @@ def call_test_file(
         annotation[trid]["coverage_warning"] = numpy.zeros(nr_inds, dtype=bool)
         annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
-        for pos in range(nr_inds):
+        for pos, sample in enumerate(samples):
+
             locus_depth = test_data[trid][0] / case_average_depth[pos]
             annotation[trid]["depth_ratio"][pos] = locus_depth
 
@@ -200,7 +202,9 @@ def call_test_file(
                 annotation[trid]["coverage_warning"][pos] = True
 
             fraction_cutoff = fraction
-            if xy and xy[pos] and "X" in test_chrom[trid] or "Y" in test_chrom[trid]:
+            sample_is_xy = sample in xy if xy is not None else False
+
+            if sample_is_xy and ("X" in test_chrom[trid] or "Y" in test_chrom[trid]):
                 fraction_cutoff = fraction - 0.5 if fraction > 0.5 else 0.05
 
             if (
