@@ -60,6 +60,7 @@ def parse_sds_training(
     training_vcf = VCF(file)
     for variant in training_vcf:
         trid = variant.INFO.get("TRID")
+
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
@@ -69,7 +70,6 @@ def parse_sds_training(
         sequencing_depths.setdefault(trid, []).append(sd)
 
     return True
-
 
 def parse_sds_test(
     file: Path, sequencing_depths: dict = None, edit_ratios: dict = None, chrom: dict = None
@@ -87,6 +87,7 @@ def parse_sds_test(
 
     for variant in training_vcf:
         trid = variant.INFO.get("TRID")
+
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
@@ -147,6 +148,9 @@ def get_total_set_p_edr_for_case(
     case_total = numpy.zeros((nr_inds, 1))
 
     for trid in test_data:
+        if trid not in training_data:
+            continue
+
         annotation[trid] = {"p": numpy.zeros(nr_inds), "edit_ratio": numpy.zeros(nr_inds)}
         td = pd.Series(sorted(training_data[trid]))
         for pos in range(nr_inds):
@@ -161,7 +165,7 @@ def get_total_set_p_edr_for_case(
 
 
 def call_test_file(
-    input_file: Path, xy: list[bool], training_data: dict, alpha, edit, fraction
+    input_file: Path, xy: List, training_data: dict, alpha, edit, fraction_cutoff: float
 ) -> dict:
     """Parse test (case of interest) VCF. This is allowed to be a multisample VCF.
     Return annotation dict, containing per locus information. Each per locus value is a numpy array with the
@@ -179,18 +183,34 @@ def call_test_file(
         training_data, nr_inds, test_data, test_edit_ratio, annotation
     )
 
+    samples = VCF(input_file).samples
+
     case_total_n_trids = len(test_data.keys())
     case_average_depth = case_total / case_total_n_trids
     logger.info(f"Case average depth {case_average_depth}")
-
     for trid in test_data:
+        if trid not in training_data:
+            logger.warning(f"Skipping {trid}: not present in training data")
+            continue
+
         # normalise depth ratio with sample average depth
         annotation[trid]["depth_ratio"] = numpy.zeros(nr_inds)
         annotation[trid]["coverage_warning"] = numpy.zeros(nr_inds, dtype=bool)
         annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
-        for pos in range(nr_inds):
-            locus_depth = test_data[trid][0] / case_average_depth[pos]
+        for pos, sample in enumerate(samples):
+
+            sample_is_xy = sample in xy if xy is not None else False
+            logger.warning(f"Sample {sample} (ind {pos}) is_xy: {sample_is_xy}")
+            if "X" in test_chrom[trid]:
+                expected_depth = 0.5 * case_average_depth[pos] if sample_is_xy else case_average_depth[pos]
+            elif "Y" in test_chrom[trid]:
+                expected_depth = 0.5 * case_average_depth[pos] if sample_is_xy else 0.0
+            else:
+                expected_depth = case_average_depth[pos]
+
+            locus_depth = test_data[trid][pos] / expected_depth if expected_depth > 0 else 0.0
+
             annotation[trid]["depth_ratio"][pos] = locus_depth
 
             if (annotation[trid]["p"][pos] < p_threshold) and (test_edit_ratio[trid][pos] > edit):
@@ -199,17 +219,13 @@ def call_test_file(
                 )
                 annotation[trid]["coverage_warning"][pos] = True
 
-            fraction_cutoff = fraction
-            if xy and xy[pos] and "X" in test_chrom[trid] or "Y" in test_chrom[trid]:
-                fraction_cutoff = fraction - 0.5 if fraction > 0.5 else 0.05
-
             if (
                 locus_depth < fraction_cutoff
                 and trid in test_edit_ratio
                 and test_edit_ratio[trid][pos] > edit
             ):
                 logger.info(
-                    f"{trid} locus coverage low with {test_data[trid][pos]}, below {fraction} of case average and edit distance ratio is over cutoff {test_edit_ratio[trid][pos]} (ind {pos})."
+                    f"{trid} locus coverage low with {test_data[trid][pos]}, below {fraction_cutoff} of case average and edit distance ratio is over cutoff {test_edit_ratio[trid][pos]} (ind {pos})."
                 )
                 annotation[trid]["coverage_warning"][pos] = True
 
