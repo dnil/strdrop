@@ -64,7 +64,8 @@ def call(
         Optional[List[str]],
         typer.Option(
             help="Sample in VCF to treat as karyotype XY. May be specified multiple times.",
-            metavar="SAMPLE ID"),
+            metavar="SAMPLE ID",
+        ),
     ] = None,
     alpha: Annotated[
         float, typer.Option(help="Unadjusted probability confidence level for coverage test")
