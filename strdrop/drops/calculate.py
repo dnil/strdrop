@@ -147,6 +147,9 @@ def get_total_set_p_edr_for_case(
     case_total = numpy.zeros((nr_inds, 1))
 
     for trid in test_data:
+        if trid not in training_data:
+            continue
+
         annotation[trid] = {"p": numpy.zeros(nr_inds), "edit_ratio": numpy.zeros(nr_inds)}
         td = pd.Series(sorted(training_data[trid]))
         for pos in range(nr_inds):
@@ -183,13 +186,17 @@ def call_test_file(input_file: Path, xy: List, training_data: dict, alpha, edit,
     logger.info(f"Case average depth {case_average_depth}")
 
     for trid in test_data:
+        if trid not in training_data:
+            logger.warning(f"Skipping {trid}: not present in training data")
+            continue
+
         # normalise depth ratio with sample average depth
         annotation[trid]["depth_ratio"] = numpy.zeros(nr_inds)
         annotation[trid]["coverage_warning"] = numpy.zeros(nr_inds, dtype=bool)
         annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
         for pos, sample in enumerate(samples):
-            locus_depth = test_data[trid][0] / case_average_depth[pos]
+            locus_depth = test_data[trid][pos] / case_average_depth[pos]
             annotation[trid]["depth_ratio"][pos] = locus_depth
 
             if (annotation[trid]["p"][pos] < p_threshold) and (test_edit_ratio[trid][pos] > edit):
