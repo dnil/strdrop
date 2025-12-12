@@ -163,7 +163,9 @@ def get_total_set_p_edr_for_case(
     return case_total
 
 
-def call_test_file(input_file: Path, xy: List, training_data: dict, alpha, edit, fraction) -> dict:
+def call_test_file(
+    input_file: Path, xy: List, training_data: dict, alpha, edit, fraction_cutoff: float
+) -> dict:
     """Parse test (case of interest) VCF. This is allowed to be a multisample VCF.
     Return annotation dict, containing per locus information. Each per locus value is a numpy array with the
     dimension (number_of_samples, 1).
@@ -196,7 +198,19 @@ def call_test_file(input_file: Path, xy: List, training_data: dict, alpha, edit,
         annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
         for pos, sample in enumerate(samples):
-            locus_depth = test_data[trid][pos] / case_average_depth[pos]
+            sample_is_xy = sample in xy if xy is not None else False
+
+            if "X" in test_chrom[trid]:
+                expected_depth = (
+                    0.5 * case_average_depth[pos] if sample_is_xy else case_average_depth[pos]
+                )
+            elif "Y" in test_chrom[trid]:
+                expected_depth = 0.5 * case_average_depth[pos] if sample_is_xy else 0.0
+            else:
+                expected_depth = case_average_depth[pos]
+
+            locus_depth = test_data[trid][pos] / expected_depth if expected_depth > 0 else 0.0
+
             annotation[trid]["depth_ratio"][pos] = locus_depth
 
             if (annotation[trid]["p"][pos] < p_threshold) and (test_edit_ratio[trid][pos] > edit):
@@ -205,19 +219,13 @@ def call_test_file(input_file: Path, xy: List, training_data: dict, alpha, edit,
                 )
                 annotation[trid]["coverage_warning"][pos] = True
 
-            fraction_cutoff = fraction
-            sample_is_xy = sample in xy if xy is not None else False
-
-            if sample_is_xy and ("X" in test_chrom[trid] or "Y" in test_chrom[trid]):
-                fraction_cutoff = fraction - 0.5 if fraction > 0.5 else 0.05
-
             if (
                 locus_depth < fraction_cutoff
                 and trid in test_edit_ratio
                 and test_edit_ratio[trid][pos] > edit
             ):
                 logger.info(
-                    f"{trid} locus coverage low with {test_data[trid][pos]}, below {fraction} of case average and edit distance ratio is over cutoff {test_edit_ratio[trid][pos]} (ind {pos})."
+                    f"{trid} locus coverage low with {test_data[trid][pos]}, below {fraction_cutoff} of case average and edit distance ratio is over cutoff {test_edit_ratio[trid][pos]} (ind {pos})."
                 )
                 annotation[trid]["coverage_warning"][pos] = True
 
