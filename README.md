@@ -78,7 +78,7 @@ You can test the functionality with one of the test files with relatively low co
 uv run strdrop call --fraction 0.55 --training-set test-data test-data/GV-42.trgt.vcf GV-42.strdrop.vcf
 ```
 
-To avoid spurious calls on X for XY karyotype, pass the `--xy` flag to lower the coverage ratio expectation with a 0.5 shift.
+To avoid spurious calls on X for XY karyotype, pass the `--xy <sample_name>` option to lower the coverage ratio expectation with a 0.5 shift.
 ```
 uv run strdrop call --xy GV-42 --fraction 0.55 --training-set test-data test-data/GV-42.trgt.vcf GV-42.strdrop.vcf
 ```
