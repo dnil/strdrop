@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some badges to README
 ### Changed
 - Handle TRIDs missing in training data
+- `--xy` now takes sample ID instead of relying on sample order in VCF
 ### Fixed
 - Ruff format for consistent code style
 - Multi individual locus depth only using first sample in VCF
