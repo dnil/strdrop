@@ -184,7 +184,6 @@ def call_test_file(
     )
 
     samples = VCF(input_file).samples
-
     case_total_n_trids = len(test_data.keys())
     case_average_depth = case_total / case_total_n_trids
     logger.info(f"Case average depth {case_average_depth}")

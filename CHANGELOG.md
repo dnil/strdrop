@@ -8,9 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 ### Added
 - Some badges to README
+<<<<<<< HEAD
 - Handle TRIDs missing in training data
 ### Changed
 - Use adjusted (by x0.5) depth ratio in `STRDROP_SDR` for X and Y loci with `--xy`, instead of adjusting the cutoff fraction by 0.5
+=======
+### Changed
+- Handle TRIDs missing in training data
+>>>>>>> upstream/main
 - `--xy` now takes sample ID instead of relying on sample order in VCF
 ### Fixed
 - Ruff format for consistent code style
