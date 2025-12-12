@@ -60,7 +60,6 @@ def parse_sds_training(
     training_vcf = VCF(file)
     for variant in training_vcf:
         trid = variant.INFO.get("TRID")
-
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
@@ -70,6 +69,7 @@ def parse_sds_training(
         sequencing_depths.setdefault(trid, []).append(sd)
 
     return True
+
 
 def parse_sds_test(
     file: Path, sequencing_depths: dict = None, edit_ratios: dict = None, chrom: dict = None
@@ -87,7 +87,6 @@ def parse_sds_test(
 
     for variant in training_vcf:
         trid = variant.INFO.get("TRID")
-
         if trid not in chrom:
             chrom[trid] = variant.CHROM
 
@@ -187,6 +186,7 @@ def call_test_file(
     case_total_n_trids = len(test_data.keys())
     case_average_depth = case_total / case_total_n_trids
     logger.info(f"Case average depth {case_average_depth}")
+
     for trid in test_data:
         if trid not in training_data:
             logger.warning(f"Skipping {trid}: not present in training data")
@@ -200,7 +200,7 @@ def call_test_file(
         for pos, sample in enumerate(samples):
 
             sample_is_xy = sample in xy if xy is not None else False
-            logger.warning(f"Sample {sample} (ind {pos}) is_xy: {sample_is_xy}")
+
             if "X" in test_chrom[trid]:
                 expected_depth = 0.5 * case_average_depth[pos] if sample_is_xy else case_average_depth[pos]
             elif "Y" in test_chrom[trid]:
