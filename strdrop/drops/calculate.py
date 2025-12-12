@@ -198,11 +198,12 @@ def call_test_file(
         annotation[trid]["coverage_drop"] = numpy.zeros(nr_inds, dtype=bool)
 
         for pos, sample in enumerate(samples):
-
             sample_is_xy = sample in xy if xy is not None else False
 
             if "X" in test_chrom[trid]:
-                expected_depth = 0.5 * case_average_depth[pos] if sample_is_xy else case_average_depth[pos]
+                expected_depth = (
+                    0.5 * case_average_depth[pos] if sample_is_xy else case_average_depth[pos]
+                )
             elif "Y" in test_chrom[trid]:
                 expected_depth = 0.5 * case_average_depth[pos] if sample_is_xy else 0.0
             else:
