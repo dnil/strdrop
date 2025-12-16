@@ -96,7 +96,7 @@ chr4	3074876	.	CCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAACAGC
 ##FORMAT=<ID=SDP,Number=1,Type=Float,Description="Strdrop coverage sequencing depth level probability">
 ##FORMAT=<ID=EDR,Number=1,Type=Float,Description="Strdrop allele similarity Levenshtein edit distance ratio">
 ##FORMAT=<ID=SDR,Number=1,Type=Float,Description="Strdrop case average adjusted sequencing depth ratio">
-##FORMAT=<ID=DROP,Number=0,Type=String,Description="Strdrop coverage drop detected, 1 for LowDepth">
+##FORMAT=<ID=DROP,Number=1,Type=String,Description="Strdrop coverage drop detected, 1 for LowDepth">
 ```
 
 Output files can be written as compressed VCF or BCF by simply giving an appropriate outfile name suffix, thanks to CyVCF2.
