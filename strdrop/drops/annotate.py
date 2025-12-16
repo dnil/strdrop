@@ -85,7 +85,7 @@ def write_output(input_file: Path, annotation: dict, output_file: Path, write_in
             "ID": "DROP",
             "Description": "Strdrop coverage drop detected, 1 for LowDepth",
             "Type": "String",
-            "Number": "0",
+            "Number": "1",
         }
     )
 
