@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Ruff Lint and Format
         uses: astral-sh/ruff-action@v3
